@@ -1,7 +1,7 @@
 import Interface 
 import CanOpenImpl as canopen
 import sys
-class CanOpenCom(Interface.Interface):
+class CanOpenCom(Interface.ComInterface):
     """This class implements interface of astract Interface class 
        for Can communication"""
     def __init__(self):

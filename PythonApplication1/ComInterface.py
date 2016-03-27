@@ -1,4 +1,4 @@
-class Interface:
+class ComInterface:
     
     ''' This is a simple interface communication
     derived from DftInterp.py written by Y.Theodor in april 2015

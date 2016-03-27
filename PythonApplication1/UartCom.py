@@ -1,9 +1,9 @@
-import Interface
+import ComInterface
 import serial
 import sys
 import logging
-
-class UartCom(Interface):
+import util
+class UartCom(ComInterface):
     """This class implements interface of astract Interface class for serial communication"""
     def __init__(self,port=0,baud=115200,parity = serial.PARITY_NONE ,timeout = 0.1):
             self._port = port
@@ -11,15 +11,14 @@ class UartCom(Interface):
             self._baud = baud
             self._timeout = timeout
             self._serialPort = None
-            self.Termin = [ord(';'),10,13,0] 
             try:
-                self._open()
+                self.open()
             except Exception:
                  sys.exc_info
-            
-    def _open(self):
-        if self._serialPort:
-
+     
+              
+    def open(self):
+            self.close()
             self._serialPort = serial.Serial()
             self._serialPort.port = self._port
             self._serialPort.baudrate = self._baud
@@ -74,8 +73,7 @@ class UartCom(Interface):
         # A list of strings to send - send them one by one 
         if SimRslt == False :
             Rslt,err = self.PingString( h , ToSend , TimeOut )
-            while  ord(Rslt[-1]) in self.Termin:
-                    Rslt =  Rslt[:-1] 
+            Rslt =  util.decodeMessage(Rslt)
         try :
             return float(Rslt)
         #    if not Rslt.isdigit():              

@@ -12,7 +12,7 @@
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>Interface</Name>
+    <Name>AtpCommunicationpy</Name>
     <RootNamespace>PythonApplication1</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
     <InterpreterId>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</InterpreterId>
@@ -42,6 +42,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UartCom.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
