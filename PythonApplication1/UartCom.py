@@ -22,8 +22,7 @@ class UartCom(ComInterface):
             self._serialPort = serial.Serial()
             self._serialPort.port = self._port
             self._serialPort.baudrate = self._baud
-            self._serialPort.timeout = self._timeout
-            self.close()
+            self._serialPort.timeout = self._timeout          
             self._serialPort.open()
 
 
@@ -53,41 +52,52 @@ class UartCom(ComInterface):
         pass
 
 
+     # Send a string through a communication handle  
+        # ToSend: The string to send 
+    def SendString( self,ToSend , NodeId = None ) : 
+        # Send a string         
+        try:
+            self._serialPort.write(ToSend.encode('ascii'))
+        except IOError as ioe:
+            logging.error(ioe)
+        except Exception as ex:
+            logging.error(ex)
 
+        return 1,'' 
+        
 
+    #def SetArray( self , h , ToSend , Ind , Numval ,TimeOut = 0.030 , NodeId = None ) : 
+    #    assert (type(ToSend) is str) and (type(Numval) is list) and (type(Ind) is list) and (len(Ind) == len(Numval)) , 'ToSend must be a string and the Ind and values be a lists of same length'
+    #    Rslt = [0] * len(Numval)
+    #    for cnt in range(len(Numval)) :
+    #        Rslt[cnt] = self.SetValue(  h , ToSend + '[{0}]'.format(Ind[cnt]) , Numval[cnt] ,TimeOut  , NodeId  )
 
-    def SetArray( self , h , ToSend , Ind , Numval ,TimeOut = 0.030 , NodeId = None ) : 
-        assert (type(ToSend) is str) and (type(Numval) is list) and (type(Ind) is list) and (len(Ind) == len(Numval)) , 'ToSend must be a string and the Ind and values be a lists of same length'
-        Rslt = [0] * len(Numval)
-        for cnt in range(len(Numval)) :
-            Rslt[cnt] = self.SetValue(  h , ToSend + '[{0}]'.format(Ind[cnt]) , Numval[cnt] ,TimeOut  , NodeId  )
+    #def GetArray( self , h , ToSend , Ind ,TimeOut = 0.030 , NodeId = None ) : 
+    #    assert (type(ToSend) is str) and (type(Ind) is list) , 'ToSend must be a string and the Ind and values be a lists of same length'
+    #    Rslt = [0] * len(Ind)
+    #    for cnt in range(len(Ind)) :
+    #        Rslt[cnt] = self.GetValue(  h , ToSend + '[{0}]'.format(Ind[cnt]),TimeOut  , NodeId  )
+    #    return Rslt
 
-    def GetArray( self , h , ToSend , Ind ,TimeOut = 0.030 , NodeId = None ) : 
-        assert (type(ToSend) is str) and (type(Ind) is list) , 'ToSend must be a string and the Ind and values be a lists of same length'
-        Rslt = [0] * len(Ind)
-        for cnt in range(len(Ind)) :
-            Rslt[cnt] = self.GetValue(  h , ToSend + '[{0}]'.format(Ind[cnt]),TimeOut  , NodeId  )
-        return Rslt
-
-    def GetValue( self, h , ToSend , TimeOut = 0.03 , SimRslt = False ) : 
-        # A list of strings to send - send them one by one 
-        if SimRslt == False :
-            Rslt,err = self.PingString( h , ToSend , TimeOut )
-            Rslt =  util.decodeMessage(Rslt)
-        try :
-            return float(Rslt)
-        #    if not Rslt.isdigit():              
-        #        return Rslt
-        #    Rslt = self.ToNum(Rslt) 
-        #else:
-        #    Rslt = SimRslt 
-        #    #Err = [] 
-        except ValueError as ve:
+    #def GetValue( self, h , ToSend , TimeOut = 0.03 , SimRslt = False ) : 
+    #    # A list of strings to send - send them one by one 
+    #    if SimRslt == False :
+    #        Rslt,err = self.PingString( h , ToSend , TimeOut )
+    #        Rslt =  util.decodeMessage(Rslt)
+    #    try :
+    #        return float(Rslt)
+    #    #    if not Rslt.isdigit():              
+    #    #        return Rslt
+    #    #    Rslt = self.ToNum(Rslt) 
+    #    #else:
+    #    #    Rslt = SimRslt 
+    #    #    #Err = [] 
+    #    except ValueError as ve:
             
-            return Rslt 
+    #        return Rslt 
 
     ###############################################################################
-    def PingString( self , h , ToSend , TimeOut = 0.030 , NodeId = None ):
+    def PingString( self , ToSend , TimeOut = 0.030 , NodeId = None ):
 
         # A list of strings to send - send them one by one 
         if type(ToSend) is list : 
@@ -96,7 +106,7 @@ class UartCom(ComInterface):
             Err  = [0] * ll
 
             for cnt in range( len(ToSend)): 
-                 Rslt[cnt],Err[cnt] = self.PingString( h , ToSend[cnt] , TimeOut)  
+                 Rslt[cnt],Err[cnt] = self.PingString(  ToSend[cnt] , TimeOut)  
             return Rslt,Err
 
         # A simple string 
@@ -105,12 +115,12 @@ class UartCom(ComInterface):
         #while ToSend[-1] in self.Termin:
         #    ToSend[-1] = ''
         #############################################
-        while ord(ToSend[-1]) in self.Termin:
-            ToSend = ToSend[:-1]
+        #while ord(ToSend[-1]) in self.Termin:
+        ToSend = util.decodeMessage(ToSend)
         ###############################################
         #self.KillString(h) 
         self._serialPort.flushInput()#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        stringhand,back = self.SendString( h , ToSend + ';') ; 
+        stringhand,back = self.SendString( ToSend + ';') ; 
         bilbo = None 
         if stringhand != 'Done' : # Done only if answer is already collected 
 
