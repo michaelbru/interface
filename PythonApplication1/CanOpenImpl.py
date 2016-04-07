@@ -122,7 +122,7 @@ SdoAbortCode = {
  
 
 """
-Ingerited class, based on the Kvaser original canlib
+Inherited class, based on the Kvaser original canlib
 The difference is by over-riding the original error checking by the routine ReadImmediateErrorCheck
 so that no exception shall be raised if the receive buffer is empty
 """
